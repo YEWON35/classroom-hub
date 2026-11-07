@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>학생 뽑기 · 학급경영 허브</title>
+  <meta name="description" content="중복 없이 공정하게 학생을 뽑는 교실용 도구. 명단은 이 기기에만 저장됩니다.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400&family=Source+Serif+4:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/style.css">
+  <style>
+    .page { padding: 32px 16px 64px; max-width: 1200px; margin: 0 auto; }
+    .crumb { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+    .head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .head h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.1; letter-spacing: -0.035em; margin: 0; font-weight: 700; color: var(--ink); }
+    .head .lede { margin-top: 8px; }
+
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+
+    /* Stage */
+    .stage {
+      background: var(--marigold); border-radius: var(--r-card); padding: 24px;
+      min-height: 380px; display: flex; flex-direction: column;
+    }
+    .stage-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .stage-label { font-weight: 600; font-size: 14px; color: rgba(0,0,0,0.7); }
+    .stage-display {
+      flex: 1; display: flex; flex-wrap: wrap; align-content: center; justify-content: center;
+      gap: 16px; padding: 24px 0; min-height: 240px;
+    }
+    .result {
+      background: var(--white); border-radius: var(--r-card); padding: 20px 36px;
+      font-size: clamp(40px, 8vw, 96px); font-weight: 700; letter-spacing: -0.048em; line-height: 1.04;
+      color: var(--ink); box-shadow: 0 4px 12px rgba(0,0,0,0.1); word-break: keep-all; text-align: center;
+    }
+    .multi .result { font-size: clamp(28px, 4.6vw, 54px); letter-spacing: -0.035em; padding: 16px 28px; }
+    .result.rolling { color: var(--ink-40); }
+    .result.pop { animation: pop 520ms var(--spring); }
+    @keyframes pop { 0% { transform: scale(0.6) rotate(-6deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+    .placeholder { font-family: var(--font-serif); font-size: 22px; color: rgba(0,0,0,0.62); text-align: center; word-break: keep-all; }
+
+    .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+    .controls .btn-primary { min-width: 180px; padding: 14px 28px; font-size: 18px; }
+    .seg { display: inline-flex; background: rgba(255,255,255,0.6); border-radius: var(--r-btn); padding: 3px; }
+    .seg button {
+      border: 0; background: transparent; border-radius: 6px; padding: 7px 12px; font-size: 14px; font-weight: 500;
+      cursor: pointer; color: rgba(0,0,0,0.7); transition: background var(--ease);
+    }
+    .seg button[aria-pressed="true"] { background: var(--white); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+    .switch { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: rgba(255,255,255,0.6); padding: 8px 12px; border-radius: var(--r-btn); }
+    .switch input { accent-color: var(--blue); width: 16px; height: 16px; margin: 0; }
+
+    /* Pool */
+    .pool { margin-top: 16px; }
+    .pool-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap; }
+    .pool-head h2, .side h2 { font-size: 18px; margin: 0; letter-spacing: -0.01em; color: var(--ink); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      border: 1px solid var(--hairline); background: var(--paper); border-radius: var(--r-pill);
+      padding: 4px 12px; font-size: 14px; cursor: pointer; transition: all var(--ease);
+    }
+    .chip:hover { border-color: var(--ink-20); }
+    .chip.done { background: transparent; color: var(--ink-40); text-decoration: line-through; }
+    .chip.just { background: var(--peach); border-color: transparent; color: var(--ink); text-decoration: none; }
+    .empty { color: var(--ink-40); font-size: 14px; }
+
+    /* Side */
+    .side { display: grid; gap: 16px; }
+    textarea {
+      width: 100%; min-height: 200px; resize: vertical; border: 1px solid var(--hairline); border-radius: var(--r-btn);
+      padding: 12px; background: var(--paper); font-size: 15px; line-height: 1.6;
+    }
+    textarea:focus { outline: 2px solid var(--blue); outline-offset: -1px; background: var(--white); }
+    .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .num-input { width: 64px; padding: 6px 8px; border: 1px solid var(--ink-20); border-radius: var(--r-small); background: var(--white); }
+    .hint { font-size: 13px; color: var(--ink-60); margin: 8px 0 12px; }
+    .history { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 260px; overflow: auto; }
+    .history li { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; padding: 8px 10px; border-radius: var(--r-btn); background: var(--paper); }
+    .history time { color: var(--ink-40); font-variant-numeric: tabular-nums; flex: none; }
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0;
+      background: var(--ink); color: var(--white); padding: 10px 16px; border-radius: var(--r-btn); font-size: 14px;
+      transition: all var(--ease); pointer-events: none; z-index: 20;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    kbd { font-family: inherit; font-size: 12px; border: 1px solid var(--ink-20); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--white); }
+
+    /* 전체 화면 */
+    body.focus .nav, body.focus .head, body.focus .side, body.focus .crumb { display: none; }
+    body.focus .layout { grid-template-columns: 1fr; }
+    body.focus .stage { min-height: calc(100vh - 220px); }
+
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="../../"><span class="brand-mark">📒</span>학급경영 허브</a>
+      <div class="nav-links"><a class="nav-link" href="../../#apps">도구 모음</a></div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="crumb"><a class="btn btn-outline" href="../../">← 허브로</a><span class="caption">수업 운영</span></div>
+    <div class="head">
+      <div>
+        <h1>🎲 학생 뽑기</h1>
+        <p class="lede">명단을 넣고 버튼만 누르세요. 한 번 뽑힌 학생은 모두 뽑힐 때까지 다시 나오지 않아요.</p>
+      </div>
+      <button class="btn btn-text" id="focusBtn" title="명단을 숨기고 뽑기 화면만 크게">⛶ 화면 크게</button>
+    </div>
+
+    <div class="layout">
+      <div>
+        <section class="stage" aria-live="polite">
+          <div class="stage-top">
+            <span class="stage-label" id="stageLabel">준비 완료</span>
+            <span class="caption" style="color:rgba(0,0,0,.62)"><kbd>Space</kbd> 로도 뽑을 수 있어요</span>
+          </div>
+          <div class="stage-display" id="display">
+            <p class="placeholder">오늘의 주인공은 누구일까요?</p>
+          </div>
+          <div class="controls">
+            <div class="seg" role="group" aria-label="뽑을 인원" id="countSeg">
+              <button data-n="1" aria-pressed="true">1명</button>
+              <button data-n="2" aria-pressed="false">2명</button>
+              <button data-n="3" aria-pressed="false">3명</button>
+              <button data-n="4" aria-pressed="false">4명</button>
+            </div>
+            <button class="btn btn-primary" id="pickBtn">뽑기</button>
+            <label class="switch"><input type="checkbox" id="noRepeat" checked> 중복 없이</label>
+          </div>
+        </section>
+
+        <section class="card pool">
+          <div class="pool-head">
+            <h2>남은 학생 <span class="caption" id="poolCount"></span></h2>
+            <button class="btn btn-outline" id="resetRound">새 라운드</button>
+          </div>
+          <div class="chips" id="chips"></div>
+          <p class="hint" style="margin-bottom:0">이름을 누르면 뽑힘 / 남음 상태를 직접 바꿀 수 있어요.</p>
+        </section>
+      </div>
+
+      <aside class="side">
+        <section class="card">
+          <h2>학생 명단</h2>
+          <p class="hint">한 줄에 한 명씩, 또는 쉼표로 구분해 입력하세요. 이 기기의 브라우저에만 저장됩니다.</p>
+          <textarea id="roster" placeholder="김하늘&#10;이바다&#10;박나무" spellcheck="false" aria-label="학생 명단"></textarea>
+          <div class="row" style="margin-top:12px; justify-content:space-between">
+            <div class="row">
+              <span class="caption">번호로 채우기</span>
+              <input class="num-input" id="numCount" type="number" min="1" max="60" value="25" aria-label="학생 수">
+              <button class="btn btn-outline" id="fillNums">채우기</button>
+            </div>
+            <button class="btn btn-ghost" id="saveRoster">명단 적용</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="row" style="justify-content:space-between; margin-bottom:12px">
+            <h2>뽑기 기록</h2>
+            <button class="btn btn-text" id="clearHistory" style="padding:4px 10px">지우기</button>
+          </div>
+          <ul class="history" id="history"></ul>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+  (function () {
+    const KEY = "hub.student-picker.v1";
+    const $ = id => document.getElementById(id);
+    const el = {
+      display: $("display"), label: $("stageLabel"), pick: $("pickBtn"), noRepeat: $("noRepeat"),
+      seg: $("countSeg"), chips: $("chips"), poolCount: $("poolCount"), roster: $("roster"),
+      history: $("history"), toast: $("toast"),
+    };
+
+    // ---------- 상태 ----------
+    let state = { names: [], picked: [], last: [], history: [], noRepeat: true, count: 1 };
+    try { Object.assign(state, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
+    const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+    const parse = text => {
+      const seen = new Set();
+      return text.split(/[\n,]/).map(s => s.trim()).filter(s => s && !seen.has(s) && seen.add(s));
+    };
+    const remaining = () => state.names.filter(n => !state.picked.includes(n));
+    const rand = max => {
+      // 암호학적 난수로 편향 없이 공정하게
+      const a = new Uint32Array(1), lim = Math.floor(0xffffffff / max) * max;
+      do { crypto.getRandomValues(a); } while (a[0] >= lim);
+      return a[0] % max;
+    };
+    const sample = (arr, k) => {
+      const c = arr.slice();
+      for (let i = c.length - 1; i > 0; i--) { const j = rand(i + 1); [c[i], c[j]] = [c[j], c[i]]; }
+      return c.slice(0, k);
+    };
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    let toastT;
+    const toast = msg => {
+      el.toast.textContent = msg; el.toast.classList.add("show");
+      clearTimeout(toastT); toastT = setTimeout(() => el.toast.classList.remove("show"), 1800);
+    };
+
+    // ---------- 렌더 ----------
+    function renderPool() {
+      const left = remaining().length;
+      el.poolCount.textContent = state.names.length ? `${left} / ${state.names.length}명` : "";
+      el.chips.innerHTML = state.names.length
+        ? state.names.map(n => {
+            const cls = state.last.includes(n) ? "chip done just" : state.picked.includes(n) ? "chip done" : "chip";
+            return `<button class="${cls}" data-name="${esc(n)}">${esc(n)}</button>`;
+          }).join("")
+        : `<span class="empty">오른쪽에 학생 명단을 입력해 주세요.</span>`;
+      el.pick.disabled = !state.names.length || rolling;
+    }
+    function renderHistory() {
+      el.history.innerHTML = state.history.length
+        ? state.history.slice(0, 50).map(h => `<li><span>${esc(h.names.join(", "))}</span><time>${esc(h.time)}</time></li>`).join("")
+        : `<li style="background:none;padding:0"><span class="empty">아직 기록이 없어요.</span></li>`;
+    }
+    function renderSettings() {
+      el.noRepeat.checked = state.noRepeat;
+      el.seg.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.n === state.count)));
+      el.roster.value = state.names.join("\n");
+    }
+    function showResults(names, cls) {
+      el.display.classList.toggle("multi", names.length > 1);
+      el.display.innerHTML = names.map(n => `<div class="result ${cls}">${esc(n)}</div>`).join("");
+    }
+
+    // ---------- 뽑기 ----------
+    let rolling = false;
+    function pick() {
+      if (rolling || !state.names.length) return;
+      let pool = state.noRepeat ? remaining() : state.names.slice();
+      if (state.noRepeat && pool.length === 0) {
+        state.picked = []; pool = state.names.slice();
+        toast("모두 한 번씩 뽑혔어요. 새 라운드를 시작합니다!");
+      }
+      const k = Math.min(state.count, pool.length);
+      if (k < state.count) toast(`남은 학생이 ${pool.length}명이라 ${k}명만 뽑아요.`);
+      const winners = sample(pool, k);
+
+      rolling = true; el.pick.disabled = true; el.label.textContent = "두근두근…";
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const start = performance.now(), dur = reduce ? 0 : 1400;
+      let delay = 50;
+      const tick = () => {
+        const t = performance.now() - start;
+        if (t >= dur) return reveal(winners);
+        showResults(sample(state.names, k), "rolling");
+        delay = 50 + (t / dur) * 180;           // 점점 느려지는 슬롯 효과
+        setTimeout(tick, delay);
+      };
+      tick();
+    }
+    function reveal(winners) {
+      showResults(winners, "pop");
+      state.last = winners;
+      if (state.noRepeat) state.picked = [...new Set([...state.picked, ...winners])];
+      const now = new Date();
+      state.history.unshift({ names: winners, time: now.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }) });
+      state.history = state.history.slice(0, 100);
+      rolling = false;
+      el.label.textContent = state.noRepeat ? `남은 학생 ${remaining().length}명` : "다시 뽑을 수 있어요";
+      save(); renderPool(); renderHistory();
+    }
+
+    // ---------- 이벤트 ----------
+    el.pick.addEventListener("click", pick);
+    document.addEventListener("keydown", e => {
+      if (e.code === "Space" && !/TEXTAREA|INPUT|BUTTON/.test(document.activeElement.tagName)) { e.preventDefault(); pick(); }
+      if (e.key === "Escape") document.body.classList.remove("focus");
+    });
+    el.seg.addEventListener("click", e => {
+      const b = e.target.closest("button[data-n]"); if (!b) return;
+      state.count = +b.dataset.n; save(); renderSettings();
+    });
+    el.noRepeat.addEventListener("change", () => { state.noRepeat = el.noRepeat.checked; save(); });
+    $("saveRoster").addEventListener("click", () => {
+      const names = parse(el.roster.value);
+      state.names = names;
+      state.picked = state.picked.filter(n => names.includes(n));
+      state.last = state.last.filter(n => names.includes(n));
+      save(); renderSettings(); renderPool();
+      toast(names.length ? `${names.length}명 명단을 적용했어요.` : "명단을 비웠어요.");
+    });
+    $("fillNums").addEventListener("click", () => {
+      const n = Math.max(1, Math.min(60, parseInt($("numCount").value, 10) || 25));
+      el.roster.value = Array.from({ length: n }, (_, i) => `${i + 1}번`).join("\n");
+      $("saveRoster").click();
+    });
+    $("resetRound").addEventListener("click", () => {
+      state.picked = []; state.last = []; save(); renderPool();
+      el.display.classList.remove("multi");
+      el.display.innerHTML = `<p class="placeholder">새 라운드! 모두에게 다시 기회가 생겼어요.</p>`;
+      el.label.textContent = "준비 완료";
+    });
+    el.chips.addEventListener("click", e => {
+      const b = e.target.closest(".chip"); if (!b) return;
+      const n = b.dataset.name;
+      state.picked = state.picked.includes(n) ? state.picked.filter(x => x !== n) : [...state.picked, n];
+      state.last = state.last.filter(x => x !== n);
+      save(); renderPool();
+    });
+    $("clearHistory").addEventListener("click", () => { state.history = []; save(); renderHistory(); });
+    $("focusBtn").addEventListener("click", () => {
+      document.body.classList.toggle("focus");
+      if (document.body.classList.contains("focus")) toast("Esc 키로 원래 화면으로 돌아갑니다.");
+    });
+
+    renderSettings(); renderPool(); renderHistory();
+    if (state.last.length) showResults(state.last, "");
+  })();
+  </script>
+</body>
+</html>

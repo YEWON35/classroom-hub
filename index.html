@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>학급경영 허브</title>
+  <meta name="description" content="교실에서 바로 쓰는 학급경영 도구 모음. 설치 없이 브라우저에서 작동합니다.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📒</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400&family=Source+Serif+4:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .hero { padding: 72px 0 64px; text-align: center; }
+    .marks { display: flex; justify-content: center; gap: 10px; margin-bottom: 28px; }
+    .mark {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--white);
+      border: 2px solid var(--c); display: grid; place-items: center; font-size: 22px;
+      animation: bob 2.8s var(--spring) infinite; animation-delay: calc(var(--i) * 0.18s);
+    }
+    @keyframes bob { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px) rotate(-4deg); } }
+    .hero .display { max-width: 900px; margin: 0 auto; }
+    .hero .lede { max-width: 600px; margin: 20px auto 0; }
+    .hero-cta { display: flex; justify-content: center; gap: 8px; margin-top: 32px; flex-wrap: wrap; }
+
+    .section { padding: 40px 0 80px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+    .filters { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter {
+      border: 1px solid var(--hairline); background: var(--white); border-radius: var(--r-pill);
+      padding: 6px 14px; font-size: 14px; font-weight: 500; color: var(--ink-60); cursor: pointer;
+      transition: all var(--ease);
+    }
+    .filter:hover { color: var(--ink); }
+    .filter[aria-pressed="true"] { background: var(--ink); color: var(--white); border-color: var(--ink); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .app-card {
+      display: flex; flex-direction: column; text-decoration: none; overflow: hidden; padding: 0;
+      transition: border-color var(--ease), transform var(--ease);
+    }
+    a.app-card:hover { border-color: rgba(0,0,0,0.2); transform: translateY(-2px); }
+    .app-card[aria-disabled="true"] { cursor: default; }
+    .app-cover { height: 120px; display: grid; place-items: center; font-size: 48px; position: relative; }
+    .app-card[aria-disabled="true"] .app-cover { opacity: 0.45; }
+    .app-body { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .app-meta { display: flex; gap: 6px; align-items: center; }
+    .app-title { font-size: 22px; line-height: 1.27; font-weight: 700; letter-spacing: -0.011em; margin: 0; color: var(--ink); }
+    .app-desc { margin: 0; color: var(--slate); font-size: 15px; word-break: keep-all; }
+    .app-go { margin-top: auto; padding-top: 12px; font-size: 14px; font-weight: 500; color: var(--blue); }
+
+    .accent-marigold { background: var(--marigold); }
+    .accent-coral { background: var(--coral); }
+    .accent-sky { background: var(--sky-wash); }
+    .accent-blue { background: var(--signal-blue); }
+    .accent-midnight { background: var(--midnight); }
+    .accent-mocha { background: var(--mocha); }
+
+    .about { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; margin-bottom: 80px; }
+    .dark-card { background: var(--midnight); color: var(--white); border-radius: var(--r-card); padding: 32px; }
+    .dark-card h3 { font-size: 28px; letter-spacing: -0.03em; margin: 0 0 12px; line-height: 1.2; }
+    .dark-card p { margin: 0; color: rgba(255,255,255,0.72); word-break: keep-all; }
+    .principles { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+    .principles li { display: flex; gap: 12px; align-items: start; }
+    .principles b { display: block; color: var(--ink); }
+    .principles span.t { color: var(--graphite); font-size: 15px; }
+    .dot { width: 28px; height: 28px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 14px; }
+
+    footer { border-top: 1px solid var(--hairline); padding: 28px 0 40px; }
+    footer .container { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+    @media (max-width: 760px) {
+      .hero { padding: 48px 0 40px; }
+      .about { grid-template-columns: 1fr; }
+      .nav-links .hide-sm { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="./"><span class="brand-mark">📒</span>학급경영 허브</a>
+      <div class="nav-links">
+        <a class="nav-link" href="#apps">도구 모음</a>
+        <a class="nav-link hide-sm" href="#about">소개</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero container">
+    <div class="marks" aria-hidden="true">
+      <span class="mark" style="--c:#097fe8;--i:0">🙂</span>
+      <span class="mark" style="--c:#f64932;--i:1">😄</span>
+      <span class="mark" style="--c:#ffb110;--i:2">🤓</span>
+      <span class="mark" style="--c:#62aef0;--i:3">😊</span>
+      <span class="mark" style="--c:#097fe8;--i:4">🥳</span>
+    </div>
+    <h1 class="display">교실의 하루를 <span class="pill-highlight">가볍게</span><br>만드는 도구들</h1>
+    <p class="lede">학급경영에 필요한 작은 프로그램을 한곳에 모았습니다. 설치도 로그인도 없이, 브라우저에서 바로 열어 쓰세요.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary btn-lg" href="apps/student-picker/">학생 뽑기 시작하기</a>
+      <a class="btn btn-ghost btn-lg" href="#apps">전체 도구 보기</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section" id="apps">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">도구 모음</h2>
+          <p class="caption" id="count" style="margin:8px 0 0"></p>
+        </div>
+        <div class="filters" id="filters" role="group" aria-label="분류 필터"></div>
+      </div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="dark-card">
+        <h3>선생님이 직접 만드는<br>학급경영 도구</h3>
+        <p>바이브 코딩으로 하나씩 만들어 이 허브에 더해 갑니다. 필요한 기능이 생길 때마다 새 도구가 늘어나요.</p>
+      </div>
+      <div class="card">
+        <ul class="principles">
+          <li><span class="dot" style="background:var(--sky-tint)">🔒</span><div><b>데이터는 내 브라우저에만</b><span class="t">학생 명단은 서버로 전송되지 않고 이 기기에만 저장됩니다.</span></div></li>
+          <li><span class="dot" style="background:#fff1d6">⚡</span><div><b>설치 없이 바로</b><span class="t">링크만 열면 교실 컴퓨터·태블릿 어디서나 작동합니다.</span></div></li>
+          <li><span class="dot" style="background:#fde3df">📺</span><div><b>화면에 띄우기 좋게</b><span class="t">TV·전자칠판에서도 잘 보이는 큰 글씨.</span></div></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container caption">
+      <span>학급경영 허브 · 프론트엔드만으로 작동하는 교실 도구 모음</span>
+      <span>모든 데이터는 사용자의 브라우저에 저장됩니다</span>
+    </div>
+  </footer>
+
+  <script src="assets/apps.js"></script>
+  <script>
+    (function () {
+      const apps = window.HUB_APPS || [];
+      const grid = document.getElementById("grid");
+      const filters = document.getElementById("filters");
+      const count = document.getElementById("count");
+      const cats = ["전체", ...new Set(apps.map(a => a.category))];
+      let current = "전체";
+
+      const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+      function renderFilters() {
+        filters.innerHTML = cats.map(c =>
+          `<button class="filter" aria-pressed="${c === current}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+      }
+      function render() {
+        const list = apps.filter(a => current === "전체" || a.category === current);
+        const live = apps.filter(a => a.status === "live").length;
+        count.textContent = `사용 가능 ${live}개 · 준비 중 ${apps.length - live}개`;
+        grid.innerHTML = list.map(a => {
+          const isLive = a.status === "live";
+          const tag = isLive ? `<span class="tag tag-live">● 사용 가능</span>` : `<span class="tag tag-soon">준비 중</span>`;
+          const inner = `
+            <div class="app-cover accent-${esc(a.accent || "marigold")}"><span>${esc(a.emoji || "✨")}</span></div>
+            <div class="app-body">
+              <div class="app-meta">${tag}<span class="caption">${esc(a.category)}</span></div>
+              <h3 class="app-title">${esc(a.title)}</h3>
+              <p class="app-desc">${esc(a.description)}</p>
+              ${isLive ? `<span class="app-go">열기 →</span>` : ""}
+            </div>`;
+          return isLive
+            ? `<a class="card app-card" href="${esc(a.path)}">${inner}</a>`
+            : `<div class="card app-card" aria-disabled="true">${inner}</div>`;
+        }).join("");
+      }
+      filters.addEventListener("click", e => {
+        const b = e.target.closest("button[data-cat]");
+        if (!b) return;
+        current = b.dataset.cat;
+        renderFilters(); render();
+      });
+      renderFilters(); render();
+    })();
+  </script>
+</body>
+</html>

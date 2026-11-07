@@ -1,0 +1,143 @@
+/* 학급경영 허브 — 공통 디자인 토큰 (warm paper notebook) */
+:root {
+  --blue: #0075de;
+  --paper: #f6f5f4;
+  --white: #ffffff;
+  --ink: #000000;
+  --ink-95: rgba(0, 0, 0, 0.95);
+  --ink-60: rgba(0, 0, 0, 0.6);
+  --ink-40: rgba(0, 0, 0, 0.4);
+  --ink-20: rgba(0, 0, 0, 0.2);
+  --graphite: #615d59;
+  --slate: #696969;
+  --sky-tint: #e6f3fe;
+  --marigold: #ffb110;
+  --coral: #f64932;
+  --peach: #f6d5b8;
+  --signal-blue: #097fe8;
+  --sky-wash: #62aef0;
+  --midnight: #02093a;
+  --mocha: #b18164;
+  --hairline: rgba(0, 0, 0, 0.08);
+
+  --font-sans: "Inter", "Noto Sans KR", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Source Serif 4", "Noto Serif KR", Georgia, serif;
+
+  --r-small: 4px;
+  --r-btn: 8px;
+  --r-card: 12px;
+  --r-pill: 9999px;
+
+  --ease: 200ms ease;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--paper);
+  color: var(--ink-95);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  font-feature-settings: "lnum";
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+button, input, textarea, select { font: inherit; color: inherit; }
+
+/* ---------- Nav ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 10;
+  height: 64px;
+  background: rgba(246, 245, 244, 0.92);
+  backdrop-filter: saturate(1.4) blur(8px);
+  box-shadow: 0 0.7px 1.462px 0 rgba(0,0,0,0.015), 0 3px 9px 0 rgba(0,0,0,0.03);
+}
+.nav-inner {
+  max-width: 1200px; height: 100%; margin: 0 auto; padding: 0 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 16px; text-decoration: none; color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.brand-mark {
+  width: 28px; height: 28px; border-radius: var(--r-btn);
+  background: var(--ink); color: var(--white);
+  display: grid; place-items: center; font-size: 15px;
+}
+.nav-links { display: flex; gap: 2px; }
+.nav-link {
+  padding: 8px 14px; border-radius: var(--r-btn);
+  color: var(--ink-60); text-decoration: none; font-weight: 500; font-size: 14px;
+  transition: color var(--ease), background var(--ease);
+}
+.nav-link:hover { color: var(--ink); background: rgba(0,0,0,0.04); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 16px; border-radius: var(--r-btn); border: 0;
+  font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer;
+  transition: background var(--ease), color var(--ease), transform var(--ease), opacity var(--ease);
+  white-space: nowrap;
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-primary { background: var(--blue); color: var(--white); }
+.btn-primary:hover:not(:disabled) { background: #005bb0; }
+.btn-ghost { background: var(--sky-tint); color: var(--blue); }
+.btn-ghost:hover:not(:disabled) { background: #d4eafd; }
+.btn-text { background: transparent; color: var(--ink-95); }
+.btn-text:hover:not(:disabled) { background: rgba(0,0,0,0.05); }
+.btn-outline {
+  background: transparent; color: rgba(0,0,0,0.9);
+  border: 1px solid var(--ink-20); border-radius: var(--r-small); padding: 5px 10px;
+}
+.btn-outline:hover:not(:disabled) { border-color: var(--ink-60); }
+.btn-lg { padding: 12px 24px; font-size: 16px; }
+
+/* ---------- Typography ---------- */
+.display {
+  font-size: clamp(40px, 7vw, 72px); line-height: 1.12; font-weight: 700;
+  letter-spacing: -0.028em; margin: 0; color: var(--ink);
+  word-break: keep-all;
+}
+.section-title {
+  font-size: clamp(30px, 4.6vw, 48px); line-height: 1.15; font-weight: 700;
+  letter-spacing: -0.035em; margin: 0; color: var(--ink); word-break: keep-all;
+}
+.lede {
+  font-family: var(--font-serif); font-size: 18px; line-height: 1.56;
+  color: var(--graphite); margin: 0; word-break: keep-all;
+}
+.caption { font-size: 12px; line-height: 1.33; letter-spacing: 0.01em; color: var(--ink-60); }
+
+.pill-highlight {
+  display: inline-block; padding: 0 0.32em; margin: 0 0.04em;
+  border-radius: var(--r-pill); background: var(--peach); color: var(--ink);
+  line-height: 1.2;
+}
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--white); border: 1px solid var(--hairline);
+  border-radius: var(--r-card); padding: 24px;
+}
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 10px; border-radius: var(--r-pill);
+  font-size: 12px; font-weight: 500; line-height: 1.6;
+}
+.tag-live { background: #dbf3e4; color: #1d6b3a; }
+.tag-soon { background: rgba(0,0,0,0.06); color: var(--ink-60); }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+}
