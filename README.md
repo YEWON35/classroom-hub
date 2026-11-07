@@ -16,5 +16,5 @@ apps/student-picker/          🎲 학생 뽑기
 2. `assets/apps.js` 의 `HUB_APPS` 에 항목을 추가합니다 (`status: "live"`, `path: "apps/<도구-id>/"`).
 
 ## 배포 (GitHub Pages)
-저장소에 올린 뒤 Settings → Pages → Branch: `main` / `(root)` 를 선택하면
-`https://<계정>.github.io/<저장소>/` 로 공개됩니다.
+`main` 브랜치의 루트(`/`)가 그대로 게시됩니다 → https://yewon35.github.io/classroom-hub/
+`main`에 올리면 1~2분 뒤 자동 반영됩니다. 별도 빌드 과정은 없습니다.
